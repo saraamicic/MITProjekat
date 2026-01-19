@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/screens/root_screen.dart';
 
 void main() {
@@ -13,6 +14,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const RootScreen(),
+
+      routes: {
+        ProductDetailsScreen.routName: (context) => const ProductDetailsScreen(),
+
+      },
+
     );
   }
 }

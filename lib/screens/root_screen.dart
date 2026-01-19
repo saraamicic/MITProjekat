@@ -31,6 +31,7 @@ class _RootScreenState extends State<RootScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {
+          //ovo je da kad kliknem na neki od ikonica da je to onda current
           setState(() {
             currentIndex = index;
           });
