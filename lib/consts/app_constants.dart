@@ -2,8 +2,8 @@ import 'package:glossyprojekat/models/product_model.dart';
 
 class AppConstants {
   static const List<String> bannersImages = [
-    'assets/banner1.jpg',
-    'assets/banner2.jpg',
+    'assets/banner5.jpg',
+    'assets/banner7.jpg',
     'assets/banner3.jpg',
   ];
 
