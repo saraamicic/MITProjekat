@@ -7,7 +7,7 @@ import 'package:glossyprojekat/widgets/title_text.dart';
 
 
 class LatestArrivalProductWidget extends StatelessWidget {
-  final ProductModel productModel; // Dodato
+  final ProductModel productModel; 
 
   const LatestArrivalProductWidget({super.key, required this.productModel});
 

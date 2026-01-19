@@ -11,17 +11,22 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    final bestSellers = AppConstants.products
+        .where((element) => element.isBestseller)
+        .toList();
+    //Uzimamo sve proizvode kojima je isBestseller postavljen na false
+    final latestArrivals = AppConstants.products
+        .where((element) => !element.isBestseller)
+        .toList();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Home'), centerTitle: true),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            
+
             // Banneri
             SizedBox(
               height: size.height * 0.25,
@@ -47,7 +52,7 @@ class HomeScreen extends StatelessWidget {
 
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 12.0),
-              child: TitelesTextWidget(label: "Latest Arrival"),
+              child: TitelesTextWidget(label: "Noviteti"),
             ),
 
             const SizedBox(height: 15),
@@ -57,22 +62,46 @@ class HomeScreen extends StatelessWidget {
               height: size.height * 0.2,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: AppConstants.products.length,
+                itemCount: latestArrivals.length,
                 itemBuilder: (context, index) {
                   return LatestArrivalProductWidget(
-                    productModel: AppConstants.products[index],
+                    productModel:
+                        latestArrivals[index], //samo one iz latest arrival
+                  );
+                },
+              ),
+            ),
+
+           const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              child: TitelesTextWidget(label: "Najbolje prodavani"),
+            ),
+
+            const SizedBox(height: 15),
+            SizedBox(
+              height: size.height * 0.20,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: bestSellers.length, // Koristi filtriranu listu
+                itemBuilder: (context, index) {
+                  return LatestArrivalProductWidget(
+                    productModel:
+                        bestSellers[index], //samo Bestseller proizvode
                   );
                 },
               ),
             ),
             
+
             const SizedBox(height: 24),
             const Center(
               child: Text(
-                'Welcome to the Glossy beauty zone',
-                style: TextStyle(fontSize: 18),
+                'Dobrodosli u Glossy beauty zonu',
+                style: TextStyle(fontSize: 18), 
+                
               ),
             ),
+          
           ],
         ),
       ),

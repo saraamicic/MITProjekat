@@ -3,8 +3,9 @@ class ProductModel {
   final String title;
   final double price;
   final String category;
-  final String image; // Dodato
-  final String description; // Dodato
+  final String image; 
+  final String description;
+  final bool isBestseller;
 
   const ProductModel({
     required this.id,
@@ -13,5 +14,6 @@ class ProductModel {
     required this.category,
     required this.image,
     required this.description,
+    required this.isBestseller,
   });
 }
