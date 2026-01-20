@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/consts/app_constants.dart';
+import 'package:glossyprojekat/screens/inner_screens/sub_category_screen.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
 
 class CategoriesScreen extends StatelessWidget {
@@ -16,13 +17,35 @@ class CategoriesScreen extends StatelessWidget {
         itemCount: AppConstants.categories.length,
         itemBuilder: (context, index) {
           final category = AppConstants.categories[index];
-          
+
+          //sta se desi kad kliknemo
           return GestureDetector(
             onTap: () {
-              // Ovde ćemo kasnije dodati navigaciju na podkategorije
+              final List<String> subCats = List<String>.from(
+                category['subCategories'],
+              );
+
+              if (subCats.isEmpty) {
+                // Ako NEMA podkategorija idi pravo na proizvode
+                Navigator.pushNamed(
+                  context,
+                  "/SearchScreen",
+                  arguments: category['name'], 
+                );
+              } else {
+                // Ako IMA podkategorija idi na ekran sa podkategorijama
+                Navigator.pushNamed(
+                  context,
+                  SubCategoryScreen.routeName,
+                  arguments: category,
+                );
+              }
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12.0,
+                vertical: 8.0,
+              ),
               child: Container(
                 height: 100,
                 decoration: BoxDecoration(
@@ -38,14 +61,19 @@ class CategoriesScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // 
+                    // slicice ikonica
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
                         width: 55,
                         height: 55,
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.1),
+                          color: const Color.fromARGB(
+                            255,
+                            255,
+                            255,
+                            255,
+                          ).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Image.asset(
@@ -54,7 +82,7 @@ class CategoriesScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // 
+                    // ime kategorije
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -64,14 +92,17 @@ class CategoriesScreen extends StatelessWidget {
                             label: category['name'],
                             fontSize: 20,
                           ),
-                          
                         ],
                       ),
                     ),
                     // Mala strelica na kraju
                     const Padding(
                       padding: EdgeInsets.only(right: 15.0),
-                      child: Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 18,
+                        color: Colors.grey,
+                      ),
                     ),
                   ],
                 ),

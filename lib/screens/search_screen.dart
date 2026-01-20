@@ -5,6 +5,7 @@ import 'package:glossyprojekat/widgets/products/product_widget.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
 
 class SearchScreen extends StatefulWidget {
+  static const routeName = "/SearchScreen"; 
   const SearchScreen({super.key});
 
   @override
@@ -13,7 +14,6 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late TextEditingController searchTextController;
-  // Dodajemo listu koja će čuvati rezultate pretrage
   List<ProductModel> productListSearch = [];
 
   @override
@@ -30,14 +30,28 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Ako je polje prazno, koristi sve proizvode, inače koristi filtriranu listu
-    List<ProductModel> currentList = searchTextController.text.isEmpty
-        ? AppConstants.products
-        : productListSearch;
+    // kategorije ako je poslata
+    final passedCategory = ModalRoute.of(context)!.settings.arguments as String?;
+
+    // za određivanje koju listu prikazujemo
+    List<ProductModel> currentList = AppConstants.products;
+
+    if (searchTextController.text.isNotEmpty) {
+      // Ako korisnik kuca u pretragu, koristi listu za pretragu
+      currentList = productListSearch;
+    } else if (passedCategory != null) {
+      // Ako je polje za kucanje prazno, ali imamo kategoriju, filtriraj po njoj
+      currentList = AppConstants.products
+          .where((element) => element.category == passedCategory)
+          .toList();
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: const TitelesTextWidget(label: "Pretraži proizvode"),
+       //ili pise naslov ili pretraga
+        title: TitelesTextWidget(
+          label: passedCategory ?? "Pretraži proizvode",
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -63,7 +77,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              // ovde se zapravo pretrazuje
               onChanged: (value) {
                 setState(() {
                   productListSearch = AppConstants.products
@@ -79,13 +92,21 @@ class _SearchScreenState extends State<SearchScreen> {
             // GridView mreža proizvoda
             Expanded(
               child: currentList.isEmpty 
-                  ? const Center(child: Text("Nema pronađenih proizvoda"))
+                  ? Center(
+                      child: Text(
+                        passedCategory != null 
+                        ? "Trenutno nemamo proizvoda u kategoriji: $passedCategory"
+                        : "Nema pronađenih proizvoda",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    )
                   : GridView.builder(
                       itemCount: currentList.length,
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Dve kolone
-                        childAspectRatio: 0.6, // Odnos širine i visine kartice
+                        crossAxisCount: 2, 
+                        childAspectRatio: 0.6, 
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                       ),

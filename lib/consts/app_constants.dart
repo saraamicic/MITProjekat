@@ -24,7 +24,7 @@ class AppConstants {
   {
     'name': 'Nega tela',
     'image': '${AssetsMenager.iconPath}/bodybutter.png',
-    'subCategories': [],
+    'subCategories': <String>[],
   },
 
   {
@@ -44,7 +44,7 @@ class AppConstants {
   {
     'name': 'Poklon setovi',
     'image': '${AssetsMenager.iconPath}/giftset.png',
-    'subCategories': [],
+    'subCategories':  <String>[],
   },
 
 ];
