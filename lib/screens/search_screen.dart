@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/consts/app_constants.dart';
-import 'package:glossyprojekat/models/product_model.dart'; // Dodaj ovaj import
+import 'package:glossyprojekat/models/product_model.dart'; 
 import 'package:glossyprojekat/widgets/products/product_widget.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
 

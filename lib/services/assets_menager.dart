@@ -1,3 +1,4 @@
 class AssetsMenager {
-  static String imagePath = "assets";
+  static String iconPath = "assets/icons";
+  static String bannerPath = "assets/banners";
 }
