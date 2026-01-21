@@ -42,6 +42,7 @@ class HomeScreen extends StatelessWidget {
                     fit: BoxFit.cover,
                   );
                 },
+
                 pagination: const SwiperPagination(
                   builder: DotSwiperPaginationBuilder(
                     activeColor: AppColors.glossyPink, 

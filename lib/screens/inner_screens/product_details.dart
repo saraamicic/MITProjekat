@@ -16,7 +16,16 @@ class ProductDetailsScreen extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-      appBar: AppBar(title: Text(productModel.title), centerTitle: true),
+      appBar: AppBar(
+        title: const Text(
+          "Detaljnije o proizvodu",
+          style: TextStyle(
+            fontSize: 20, 
+            fontWeight: FontWeight.w600, 
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -38,8 +47,8 @@ class ProductDetailsScreen extends StatelessWidget {
                     children: [
                       TitelesTextWidget(
                         label: productModel.title,
-                        fontSize: 24, 
-                        maxLines: 5, 
+                        fontSize: 24,
+                        maxLines: 5,
                       ),
                       const SizedBox(
                         height: 10,
@@ -74,7 +83,7 @@ class ProductDetailsScreen extends StatelessWidget {
         width: double.infinity,
         height: 80,
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.all(10.0),
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(255, 208, 139, 162),

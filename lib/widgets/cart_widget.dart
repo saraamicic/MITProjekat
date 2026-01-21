@@ -1,9 +1,7 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
-import 'package:glossyprojekat/screens/cart/quantity_btm_sheet.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
-import 'package:iconly/iconly.dart';
 
 class CartWidget extends StatelessWidget {
   const CartWidget({super.key});
@@ -11,91 +9,126 @@ class CartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    
-    return FittedBox(
-      child: IntrinsicWidth(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.pink.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Slika proizvoda sa shimmer efektom kao na vežbama
+              // slika proizvoda
               ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomLeft: Radius.circular(15),
+                ),
                 child: FancyShimmerImage(
-                  imageUrl: "https://t4.ftcdn.net/jpg/03/23/02/09/360_F_323020942_S6Y7v9eK1C7YfP1I9f9YxH9p7YvR0B4W.jpg", 
-                  height: size.height * 0.2,
-                  width: size.height * 0.2,
+                  imageUrl:
+                      "https://www.lilly.rs/media/catalog/product/cache/8bd1c2c6eb0077b12ecfb0078340c065/3/6/3600522840114.jpg",
+                  height: size.height * 0.13,
+                  width: size.height * 0.13,
                   boxFit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(width: 10),
-              IntrinsicWidth(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        // Naslov proizvoda
-                        SizedBox(
-                          width: size.width * 0.6,
-                          child: const TitelesTextWidget(
-                            label: "Naziv proizvoda", 
-                            maxLines: 2,
-                          ),
-                        ),
-                        // Dugmići za brisanje (ikona X kao na vežbama)
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.clear,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        // Cena
-                        const SubtitleTextWidget(
-                          label: "1200 RSD",
-                          color: Color.fromARGB(255, 226, 143, 171),
-                        ),
-                        const Spacer(),
-                        // Dugme za količinu koje otvara onaj BottomSheet koji smo napravili
-                        OutlinedButton.icon(
-                          onPressed: () async {
-                            await showModalBottomSheet(
-                              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(30),
-                                  topRight: Radius.circular(30),
-                                ),
-                              ),
-                              context: context,
-                              builder: (context) {
-                                return const QuantityBottomSheetWidget();
-                              },
-                            );
-                          },
-                          icon: const Icon(IconlyLight.arrow_down_2),
-                          label: const Text("Kol: 1"),
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(width: 1, color: Colors.grey),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30.0),
+              const SizedBox(width: 12),
+              // detalji proizvoda
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: TitelesTextWidget(
+                              label: "Glossy Ruž za usne ",
+                              fontSize: 16,
+                              maxLines: 3,
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                          IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.clear,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SubtitleTextWidget(
+                        label: "1200 RSD",
+                        color: Color.fromARGB(255, 226, 143, 171),
+                      ),
+                      const SizedBox(height: 10),
+                      // plus minus 
+                      Row(
+                        children: [
+                          _quantityController(
+                            icon: Icons.remove,
+                            color: Colors.grey.shade300,
+                            onTap: () {
+                              // smanji kol
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: SubtitleTextWidget(
+                              label: "1", // ovde će biti broj
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          _quantityController(
+                            icon: Icons.add,
+                            color: const Color.fromARGB(255, 226, 143, 171),
+                            onTap: () {
+                              // povecaj kol
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              )
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  // pomocni vidzet za plus minut kontrolice
+  Widget _quantityController({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(icon, size: 18, color: Colors.white),
       ),
     );
   }

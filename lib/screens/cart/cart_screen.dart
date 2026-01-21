@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/screens/cart/bottom_checkout.dart';
 import 'package:glossyprojekat/widgets/cart_widget.dart';
+import 'package:glossyprojekat/widgets/title_text.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -9,12 +10,9 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomSheet: const CartBottomWidget(),
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-         
-        ),
-        title: const Text("Glossy Korpa"), // naslov
+       appBar: AppBar(
+        title: const TitelesTextWidget(label: "Korpa"),
+        centerTitle: true,
         actions: [
           IconButton(
             onPressed: () {},
@@ -23,6 +21,7 @@ class CartScreen extends StatelessWidget {
         ],
       ),
       body: ListView.builder(
+        padding: const EdgeInsets.only(bottom: kBottomNavigationBarHeight + 40),
         itemCount: 5, // pet puta isti widget
         itemBuilder: (context, index) {
           return const CartWidget();

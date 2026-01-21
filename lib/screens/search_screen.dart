@@ -48,9 +48,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
        //ili pise naslov ili pretraga
         title: TitelesTextWidget(
           label: passedCategory ?? "Pretraži proizvode",
+         
         ),
       ),
       body: Padding(
