@@ -1,5 +1,7 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; 
+import 'package:glossyprojekat/consts/app_colors.dart';
 import 'package:glossyprojekat/widgets/products/latest_arrivals.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
@@ -15,13 +17,13 @@ class HomeScreen extends StatelessWidget {
     final bestSellers = AppConstants.products
         .where((element) => element.isBestseller)
         .toList();
-    //Uzimamo sve proizvode kojima je isBestseller postavljen na false
+    
     final latestArrivals = AppConstants.products
         .where((element) => !element.isBestseller)
         .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home'), centerTitle: true),
+      appBar: AppBar(title: const Text('Glossy'), centerTitle: true),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,7 +44,7 @@ class HomeScreen extends StatelessWidget {
                 },
                 pagination: const SwiperPagination(
                   builder: DotSwiperPaginationBuilder(
-                    activeColor: Color.fromARGB(255, 198, 123, 144),
+                    activeColor: AppColors.glossyPink, 
                     color: Colors.grey,
                   ),
                 ),
@@ -56,9 +58,9 @@ class HomeScreen extends StatelessWidget {
               child: TitelesTextWidget(label: "Noviteti"),
             ),
 
-            const SizedBox(height: 15),
+            const SizedBox(height: 8),
 
-            //Latest arrival
+            // Latest arrival
             SizedBox(
               height: size.height * 0.2,
               child: ListView.builder(
@@ -66,81 +68,74 @@ class HomeScreen extends StatelessWidget {
                 itemCount: latestArrivals.length,
                 itemBuilder: (context, index) {
                   return LatestArrivalProductWidget(
-                    productModel:
-                        latestArrivals[index], //samo one iz latest arrival
+                    productModel: latestArrivals[index],
                   );
                 },
               ),
             ),
 
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 15),
-              child: TitelesTextWidget(label: "Najbolje prodavani"),
+              padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 20, bottom: 5), 
+              child: TitelesTextWidget(label: "Najbolje prodavani",),
             ),
 
-            const SizedBox(height: 15),
+           
+            const SizedBox(height: 5),
+            
             SizedBox(
               height: size.height * 0.20,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                itemCount: bestSellers.length, // Koristi filtriranu listu
+                itemCount: bestSellers.length,
                 itemBuilder: (context, index) {
                   return LatestArrivalProductWidget(
-                    productModel:
-                        bestSellers[index], //samo Bestseller proizvode
+                    productModel: bestSellers[index],
                   );
                 },
               ),
             ),
 
-            const SizedBox(height: 90),
-            const Center(
+            const SizedBox(height: 50),
+            
+            Center(
               child: Text(
-                'Dobrodosli u Glossy beauty zonu ',
-                style: TextStyle(
+                'Dobrodošli u Glossy beauty zonu',
+                style: GoogleFonts.montserrat( 
                   fontSize: 18,
-                  fontWeight: FontWeight.bold, // Boldovano
-                  color: Color.fromARGB(255,226,143,171,
-                  ),
+                  fontWeight: FontWeight.w800, 
+                  color: Colors.black,
                 ),
               ),
             ),
 
-            //o nama na dnu
+            // O nama na dnu
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
-                vertical: 50.0,
+                vertical: 40.0,
               ),
               child: Container(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).cardColor.withOpacity(0.5), // Blaga pozadina
-                  borderRadius: BorderRadius.circular(15.0),
+                 
+                  color:Color.fromARGB(255, 253, 235, 236).withOpacity(0.4), 
+                  borderRadius: BorderRadius.circular(20.0),
                   border: Border.all(
-                    color: const Color.fromARGB(
-                      255,
-                      226,
-                      143,
-                      171,
-                    ).withOpacity(0.3), // Nežna roze ivica
+                    color: AppColors.glossyPink.withOpacity(0.3), 
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const TitelesTextWidget(label: "O nama ", fontSize: 18),
-                    const SizedBox(height: 10),
+                    const TitelesTextWidget(label: "O nama", fontSize: 20,),
+                    const SizedBox(height: 12),
                     SubtitleTextWidget(
                       label:
-                          "Dobrodošli u Glossy, vašu omiljenu destinaciju za vrhunsku negu, lepotu i svakodnevno uživanje. Naša misija je da vam omogućimo pristup najkvalitetnijim proizvodima svetskih brendova koji su pažljivo birani da istaknu vašu prirodnu lepotu. \n\n Verujemo da svaka osoba zaslužuje trenutke luksuza u svojoj rutini, bez obzira na to koliko dan bio užurban."
+                          "Dobrodošli u Glossy, vašu omiljenu destinaciju za vrhunsku negu, lepotu i svakodnevno uživanje. Naša misija je da vam omogućimo pristup najkvalitetnijim proizvodima svetskih brendova koji su pažljivo birani da istaknu vašu prirodnu lepotu. \n\nVerujemo da svaka osoba zaslužuje trenutke luksuza u svojoj rutini, bez obzira na to koliko dan bio užurban. \n\n"
                           "Naš tim stručnjaka neprestano istražuje tržište kako bi vam doneo najnovije trendove i proverene formule kojima možete verovati. U Glossy porodici, fokus je uvek na autentičnosti, održivosti i stvaranju besprekornog iskustva kupovine za svakog korisnika.\n\n"
                           "Svaki proizvod u našoj ponudi nosi pečat kvaliteta jer verujemo da je nega kože i tela najlepši oblik brige o sebi. Budite sjajni, budite inspirisani i dozvolite nam da budemo deo vaše priče o lepoti – uz Glossy.",
-
                       fontSize: 14,
-                      // maxLines: 10, // Opciono ako želiš da osiguraš da se sve vidi
+                      fontWeight: FontWeight.w400, 
                     ),
                   ],
                 ),

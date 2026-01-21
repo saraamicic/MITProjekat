@@ -33,7 +33,7 @@ class SubCategoryScreen extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
             child: GestureDetector(
-              onTap: () {
+              onTap: () { //ako kliknem na podkategoriju salje me na search screen
                 Navigator.pushNamed(
                   context,
                   "/SearchScreen", 

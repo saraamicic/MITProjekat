@@ -11,7 +11,8 @@ class LatestArrivalProductWidget extends StatelessWidget {
 
   const LatestArrivalProductWidget({super.key, required this.productModel});
 
-Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
   Size size = MediaQuery.of(context).size;
   return Padding(
     padding: const EdgeInsets.all(8.0),

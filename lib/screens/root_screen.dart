@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:glossyprojekat/screens/cart_screen.dart';
+import 'package:glossyprojekat/screens/cart/cart_screen.dart';
 import 'package:glossyprojekat/screens/categories_screen.dart';
 import 'package:glossyprojekat/screens/home_screen.dart';
 import 'package:glossyprojekat/screens/profile_screen.dart';

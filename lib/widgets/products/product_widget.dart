@@ -72,7 +72,7 @@ class ProductWidget extends StatelessWidget {
                   Flexible(
                     child: Icon(
                       Icons.add_shopping_cart,
-                      size: 18,
+                      size: 20,
                       color: Colors.grey.shade600,
                     ),
                   ),
