@@ -27,23 +27,22 @@ class LatestArrivalProductWidget extends StatelessWidget {
       child: Container( 
         width: size.width * 0.7, //za karticu
         height: size.width * 0.35,
-        padding: const EdgeInsets.all(9.0), // Unutrašnji razmak da tekst ne udara u ivicu
+        padding: const EdgeInsets.all(9.0), 
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor, // Boja kartice prati temu (tamna/svetla)
+          color: Theme.of(context).cardColor, 
           borderRadius: BorderRadius.circular(12.0),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1), // Veoma nežna crna senka
+              color: Colors.black.withOpacity(0.1), 
               spreadRadius: 1,
               blurRadius: 5,
-              offset: const Offset(0, 3), // Pomera senku malo nadole
+              offset: const Offset(0, 3), 
             ),
           ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Slika proizvoda
             ClipRRect(
               borderRadius: BorderRadius.circular(12.0),
               child: FancyShimmerImage(
@@ -53,7 +52,6 @@ class LatestArrivalProductWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 10),
-            // Tekstualni podaci
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

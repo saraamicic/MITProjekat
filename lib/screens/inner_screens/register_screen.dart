@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glossyprojekat/screens/profile/user_profile_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   static const routeName = "/RegisterScreen";
@@ -97,7 +98,7 @@ class RegisterScreen extends StatelessWidget {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pushNamed(context, UserProfileScreen.routeName);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 239, 170, 193),

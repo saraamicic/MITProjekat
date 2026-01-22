@@ -5,8 +5,11 @@ import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/sub_category_screen.dart';
+import 'package:glossyprojekat/screens/profile/loyalty_card_screen.dart';
+import 'package:glossyprojekat/screens/profile/wishlist_screen.dart';
 import 'package:glossyprojekat/screens/root_screen.dart';
 import 'package:glossyprojekat/screens/search_screen.dart';
+import 'package:glossyprojekat/screens/profile/user_profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -55,6 +58,9 @@ class MyApp extends StatelessWidget {
           SubCategoryScreen.routeName: (context) => const SubCategoryScreen(),
           SearchScreen.routeName: (context) => const SearchScreen(),
           RegisterScreen.routeName: (context) => const RegisterScreen(),
+          UserProfileScreen.routeName: (context) => const UserProfileScreen(),
+          LoyaltyCardScreen.routeName: (context) => const LoyaltyCardScreen(),
+          WishlistScreen.routeName: (context) => WishlistScreen(),
         },
       ),
     );

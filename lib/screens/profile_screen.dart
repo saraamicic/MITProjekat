@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
+import 'package:glossyprojekat/screens/profile/user_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -101,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: 50,
                       child: ElevatedButton(
                         onPressed: () {
-                          print("Login: ${_emailController.text}");
+                          Navigator.pushNamed(context, UserProfileScreen.routeName);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 239, 170, 193),
