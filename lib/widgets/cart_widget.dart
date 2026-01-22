@@ -20,7 +20,6 @@ class CartWidget extends StatelessWidget {
     final productProvider = Provider.of<ProductsProvider>(context);
     final getCurrentProduct = productProvider.findByProdId(cartModel.productId);
     
-    // Pristupamo CartProvider-u za funkcije plus/minus/brisanje
     final cartProvider = Provider.of<CartProvider>(context);
 
     if (getCurrentProduct == null) return const SizedBox.shrink();
@@ -95,6 +94,7 @@ class CartWidget extends StatelessWidget {
                       const SizedBox(height: 10), 
                       Row(
                         children: [
+                          //minusic
                           _quantityController(
                             icon: Icons.remove,
                             color: Colors.grey.shade300,
@@ -112,6 +112,7 @@ class CartWidget extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+                          //plusic
                           _quantityController(
                             icon: Icons.add,
                             color: const Color.fromARGB(255, 226, 143, 171),

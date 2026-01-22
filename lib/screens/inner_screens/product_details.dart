@@ -114,6 +114,7 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              
               final cartProvider = Provider.of<CartProvider>(
                 context,
                 listen: false,

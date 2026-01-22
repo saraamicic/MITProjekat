@@ -3,6 +3,7 @@ import 'package:glossyprojekat/consts/app_colors.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
+import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/sub_category_screen.dart';
 import 'package:glossyprojekat/screens/root_screen.dart';
 import 'package:glossyprojekat/screens/search_screen.dart';
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
               const ProductDetailsScreen(),
           SubCategoryScreen.routeName: (context) => const SubCategoryScreen(),
           SearchScreen.routeName: (context) => const SearchScreen(),
+          RegisterScreen.routeName: (context) => const RegisterScreen(),
         },
       ),
     );
