@@ -76,13 +76,11 @@ class HomeScreen extends StatelessWidget {
             ),
 
             const Padding(
-              padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 20, bottom: 5), 
+              padding: EdgeInsets.only(left: 12.0, right: 12.0,
+              top: 20, bottom: 5), 
               child: TitelesTextWidget(label: "Najbolje prodavani",),
             ),
-
-           
             const SizedBox(height: 5),
-            
             SizedBox(
               height: size.height * 0.20,
               child: ListView.builder(

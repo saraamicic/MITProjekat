@@ -73,7 +73,6 @@ void updateQuantity({required String productId, required int quantity}) {
   ));
   notifyListeners();
 }
-
 // Za brisanje jednog proizvoda iz korpe
 void removeOneItem({required String productId}) {
   _cartItems.remove(productId);

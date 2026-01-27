@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "202764777668",
+    "project_id": "glossyprojekat",
+    "storage_bucket": "glossyprojekat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202764777668:android:abbabc6c990f1d445d7191",
+        "android_client_info": {
+          "package_name": "com.example.glossyprojekat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0Bte0oNATwB2fWNnNhZ5mhdJVzzzm1As"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

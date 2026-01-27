@@ -43,14 +43,8 @@ class SubCategoryScreen extends StatelessWidget {
               child: Container(
                 height: 60,
                 decoration: BoxDecoration(
-                  
                   border: Border.all(
-                    color: const Color.fromARGB(
-                      255,
-                      226,
-                      143,
-                      171,
-                    ).withOpacity(0.5),
+                    color: const Color.fromARGB( 255, 226, 143, 171,).withOpacity(0.5),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),

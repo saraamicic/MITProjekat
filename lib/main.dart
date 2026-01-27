@@ -12,8 +12,33 @@ import 'package:glossyprojekat/screens/search_screen.dart';
 import 'package:glossyprojekat/screens/profile/user_profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+      apiKey: "AIzaSyC0Bte0oNATwB2fWNnNhZ5mhdJVzzzm1As",
+      appId: "1:202764777668:android:977834bf9c20070b5d7191",
+      messagingSenderId: "202764777668",
+      projectId: "glossyprojekat",
+      storageBucket: "glossyprojekat.firebasestorage.app", 
+    ),
+  );
+
+  try {
+    await FirebaseFirestore.instance.collection('test_konekcija').add({
+      'korisnik': 'Sara',
+      'poruka': 'Backend je uspesno povezan!',
+      'vreme': DateTime.now().toString(),
+    });
+    print("USPEH: Podatak je poslat u Firestore!");
+  } catch (e) {
+    print("GRESKA: Nesto nije u redu: $e");
+  }
+  
+  
   runApp(const MyApp());
 }
 

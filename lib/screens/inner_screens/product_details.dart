@@ -59,12 +59,7 @@ class ProductDetailsScreen extends StatelessWidget {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(
-                            255,
-                            226,
-                            143,
-                            171,
-                          ).withOpacity(0.1),
+                          color: const Color.fromARGB(255, 226, 143, 171,).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
