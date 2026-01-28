@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/screens/cart/cart_screen.dart';
 import 'package:glossyprojekat/screens/categories_screen.dart';
 import 'package:glossyprojekat/screens/home_screen.dart';
 import 'package:glossyprojekat/screens/profile_screen.dart';
 import 'package:glossyprojekat/screens/search_screen.dart';
+import 'package:provider/provider.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
@@ -14,6 +16,19 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    //cim se aplikacija pokrene fetchujem podatke radi korpe
+    Future.microtask(() async {
+      try {
+        await Provider.of<ProductsProvider>(context, listen: false).fetchProducts();
+      } catch (error) {
+        print("Greška pri učitavanju proizvoda: $error");
+      }
+    });
+  }
 
   final List<Widget> screens = const [
     HomeScreen(),

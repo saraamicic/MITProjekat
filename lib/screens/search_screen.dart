@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:glossyprojekat/consts/app_constants.dart';
 import 'package:glossyprojekat/models/product_model.dart'; 
 import 'package:glossyprojekat/widgets/products/product_widget.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
@@ -14,114 +14,104 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   late TextEditingController searchTextController;
-  List<ProductModel> productListSearch = [];
+  List<ProductModel> allProducts = []; // sve iz baze
+  List<ProductModel> filteredList = []; // ono sto prikazemo
+  bool isLoading = true;
 
   @override
   void initState() {
-    searchTextController = TextEditingController();
     super.initState();
+    searchTextController = TextEditingController();
+    fetchProducts(); // cim se ekran otvori uzimamo podatke
   }
 
-  @override
-  void dispose() {
-    searchTextController.dispose();
-    super.dispose();
+
+  Future<void> fetchProducts() async {final snapshot = await FirebaseFirestore.instance.collection('products').get();
+  
+  // uzmemo sve iz baze
+  allProducts = snapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
+  
+  // gledamo jel prosledjena neka kategorija
+  final passedCategory = ModalRoute.of(context)!.settings.arguments as String?;
+
+  setState(() {
+    if (passedCategory != null) {
+      // ako imamo kategoriju prema njoj filtriramo
+      filteredList = allProducts
+          .where((element) => element.category.toLowerCase() == passedCategory.toLowerCase())
+          .toList();
+    } else {
+      // Ako nema kategorije (direkt preko searcha smo), prikazi sve
+      filteredList = allProducts;
+    }
+    isLoading = false;
+  });
+  }
+
+  void _runFilter(String query, String? category) {
+    List<ProductModel> results = [];
+    
+    // ako postoji kategorija prvo po njoj
+    results = allProducts;
+    if (category != null) {
+      results = results.where((p) => p.category == category).toList();
+    }
+
+    // onda ono sto korisnik kuca
+    if (query.isNotEmpty) {
+      results = results
+          .where((p) => p.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+
+    setState(() {
+      filteredList = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // kategorije ako je poslata
     final passedCategory = ModalRoute.of(context)!.settings.arguments as String?;
-
-    // za određivanje koju listu prikazujemo
-    List<ProductModel> currentList = AppConstants.products;
-
-    if (searchTextController.text.isNotEmpty) {
-      // Ako korisnik kuca u pretragu, koristi listu za pretragu
-      currentList = productListSearch;
-    } else if (passedCategory != null) {
-      // Ako je polje za kucanje prazno, ali imamo kategoriju, filtriraj po njoj
-      currentList = AppConstants.products
-          .where((element) => element.category == passedCategory)
-          .toList();
-    }
 
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
-       //ili pise naslov ili pretraga
-        title: TitelesTextWidget(
-          label: passedCategory ?? "Pretraži proizvode",
-         
-        ),
+        title: TitelesTextWidget(label: passedCategory ?? "Pretraži proizvode"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            // TextField polje za kucanje
-            TextField(
-              controller: searchTextController,
-              decoration: InputDecoration(
-                hintText: "Pretraga...",
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      searchTextController.clear();
-                      FocusScope.of(context).unfocus();
-                    });
-                  },
-                  icon: const Icon(Icons.clear,
-                      color: Color.fromARGB(255, 120, 32, 24)),
+      body: isLoading 
+        ? const Center(child: CircularProgressIndicator()) 
+        : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: searchTextController,
+                  onChanged: (value) => _runFilter(value, passedCategory),
+                  decoration: InputDecoration(
+                    hintText: "Pretraga...",
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 15),
+                Expanded(
+                  child: filteredList.isEmpty 
+                    ? const Center(child: Text("Nema rezultata"))
+                    : GridView.builder(
+                        itemCount: filteredList.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.6,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
+                        itemBuilder: (context, index) {
+                          return ProductWidget(productModel: filteredList[index]);
+                        },
+                      ),
                 ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  productListSearch = AppConstants.products
-                      .where((element) => element.title
-                          .toLowerCase()
-                          .contains(value.toLowerCase()))
-                      .toList();
-                });
-              },
+              ],
             ),
-            const SizedBox(height: 15),
-
-            // GridView mreža proizvoda
-            Expanded(
-              child: currentList.isEmpty 
-                  ? Center(
-                      child: Text(
-                        passedCategory != null 
-                        ? "Trenutno nemamo proizvoda u kategoriji: $passedCategory"
-                        : "Nema pronađenih proizvoda",
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    )
-                  : GridView.builder(
-                      itemCount: currentList.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, 
-                        childAspectRatio: 0.6, 
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemBuilder: (context, index) {
-                        return ProductWidget(
-                          productModel: currentList[index],
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 }

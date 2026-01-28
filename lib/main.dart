@@ -13,7 +13,6 @@ import 'package:glossyprojekat/screens/profile/user_profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,18 +26,6 @@ void main() async {
     ),
   );
 
-  try {
-    await FirebaseFirestore.instance.collection('test_konekcija').add({
-      'korisnik': 'Sara',
-      'poruka': 'Backend je uspesno povezan!',
-      'vreme': DateTime.now().toString(),
-    });
-    print("USPEH: Podatak je poslat u Firestore!");
-  } catch (e) {
-    print("GRESKA: Nesto nije u redu: $e");
-  }
-  
-  
   runApp(const MyApp());
 }
 
