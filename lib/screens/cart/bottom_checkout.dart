@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
+import 'package:glossyprojekat/screens/inner_screens/checkout_screen.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +50,7 @@ class CartBottomWidget extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
+                  Navigator.pushNamed(context, CheckoutScreen.routeName);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 226, 143, 171),

@@ -1,21 +1,25 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/models/product_model.dart';
+import 'package:glossyprojekat/providers/wishlist_provider.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
+import 'package:provider/provider.dart'; 
 
 class ProductWidget extends StatelessWidget {
   final ProductModel productModel;
+  
   const ProductWidget({super.key, required this.productModel});
 
   @override
   Widget build(BuildContext context) {
+    // dodala provajder
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
     Size size = MediaQuery.of(context).size;
     
     return GestureDetector(
       onTap: () {
-        // Navigacija na detalje proizvoda
         Navigator.pushNamed(
           context,
           ProductDetailsScreen.routName,
@@ -43,49 +47,43 @@ class ProductWidget extends StatelessWidget {
                 boxFit: BoxFit.cover,
               ),
             ),
-            //dole su mi naslov cena i srce
             Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 2.0, bottom: 8.0, top: 4.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 6.0),
-                    child: TitelesTextWidget(
-                      label: productModel.title,
-                      fontSize: 14,
-                      maxLines: 2,
-                    ),
+                  TitelesTextWidget(
+                    label: productModel.title,
+                    fontSize: 14,
+                    maxLines: 2,
                   ),
                   const SizedBox(height: 6),
-                  // Red sa cenom i srcem
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: SubtitleTextWidget(
-                            label: "${productModel.price} RSD",
-                            fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 226, 143, 171),
-                          ),
+                        child: SubtitleTextWidget(
+                          label: "${productModel.price} RSD",
+                          fontWeight: FontWeight.bold,
+                          color: const Color.fromARGB(255, 226, 143, 171),
                         ),
                       ),
-
-                      Material(
-                        color: Colors.transparent,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: const BoxConstraints(),
-                          onPressed: () {
-                            // wishlist logika 
-                          },
-                          icon: const Icon(
-                            Icons.favorite_border,
-                            color: Colors.pink,
-                            size: 20,
-                          ),
+                      // srculence
+                      IconButton(
+                        onPressed: () {
+                          wishlistProvider.addOrRemoveFromWishlist(
+                            productId: productModel.id,
+                          );
+                        },
+                        icon: Icon(
+                          wishlistProvider.isProductInWishlist(
+                                  productId: productModel.id)
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: wishlistProvider.isProductInWishlist(
+                                  productId: productModel.id)
+                              ? Colors.red
+                              : Colors.grey,
                         ),
                       ),
                     ],

@@ -2,6 +2,7 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/models/product_model.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
+import 'package:glossyprojekat/providers/wishlist_provider.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,7 @@ class ProductDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final productModel =
         ModalRoute.of(context)!.settings.arguments as ProductModel;
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -59,15 +61,29 @@ class ProductDetailsScreen extends StatelessWidget {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 226, 143, 171,).withOpacity(0.1),
+                          color: const Color.fromARGB(
+                            255,
+                            226,
+                            143,
+                            171,
+                          ).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
                           onPressed: () {
-                            // wishlist logika
+                            // Pozivamo funkciju za dodavanje/uklanjanje
+                            wishlistProvider.addOrRemoveFromWishlist(
+                              productId: productModel.id,
+                            );
                           },
-                          icon: const Icon(
-                            Icons.favorite_border,
+                          icon: Icon(
+                            // Proveravamo da li je ID u mapi favorita
+                            wishlistProvider.isProductInWishlist(
+                                  productId: productModel.id,
+                                )
+                                ? Icons
+                                      .favorite // Puno srce
+                                : Icons.favorite_border, // Prazno srce
                             color: Colors.pink,
                             size: 28,
                           ),
@@ -109,7 +125,6 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              
               final cartProvider = Provider.of<CartProvider>(
                 context,
                 listen: false,
@@ -117,8 +132,8 @@ class ProductDetailsScreen extends StatelessWidget {
               cartProvider.addProductToCart(productId: productModel.id);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: const Color.fromARGB(255,226,143,171,), 
-                  behavior: SnackBarBehavior.floating, 
+                  backgroundColor: const Color.fromARGB(255, 226, 143, 171),
+                  behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

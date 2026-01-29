@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/consts/app_colors.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
+import 'package:glossyprojekat/providers/orders_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
+import 'package:glossyprojekat/providers/wishlist_provider.dart';
+import 'package:glossyprojekat/screens/inner_screens/checkout_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/sub_category_screen.dart';
@@ -38,6 +41,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => WishlistProvider()),
+        ChangeNotifierProvider(create: (_) => OrdersProvider()),
       ],
       child: MaterialApp(
         title: 'Glossy',
@@ -73,6 +78,7 @@ class MyApp extends StatelessWidget {
           UserProfileScreen.routeName: (context) => const UserProfileScreen(),
           LoyaltyCardScreen.routeName: (context) => const LoyaltyCardScreen(),
           WishlistScreen.routeName: (context) => WishlistScreen(),
+          CheckoutScreen.routeName: (context) => const CheckoutScreen(),
         },
       ),
     );
