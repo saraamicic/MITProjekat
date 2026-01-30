@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:glossyprojekat/screens/profile/loyalty_card_screen.dart';
+import 'package:glossyprojekat/screens/inner_screens/orders_screen.dart';
 import 'package:glossyprojekat/screens/profile/wishlist_screen.dart';
-import 'package:glossyprojekat/screens/inner_screens/orders_screen.dart'; 
+import 'package:glossyprojekat/screens/profile/loyalty_card_screen.dart'; 
 
 class UserProfileScreen extends StatelessWidget {
   static const routeName = "/UserProfileScreen";
@@ -9,150 +11,259 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: Text("Niste ulogovani.")));
+    }
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Moj Profil", style: TextStyle(color: Colors.black, fontSize: 22)),
+        title: const Text("Moj Profil", style: TextStyle(color: Colors.black)),
         backgroundColor: const Color.fromARGB(255, 253, 235, 236),
         elevation: 0.5,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            // Blok za user info
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 253, 235, 236),
-                borderRadius: BorderRadius.circular(15),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.pink),
+            );
+          }
+          if (snapshot.hasError) {
+            return const Center(child: Text("Greška pri učitavanju podataka"));
+          }
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: Text("Podaci o korisniku ne postoje."));
+          }
+
+          final userData = snapshot.data!.data() as Map<String, dynamic>;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 253, 235, 236),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      'https://placedog.net/100/100',
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        "Sara Micic",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.person, size: 40, color: Colors.pink),
                       ),
-                      Text(
-                        "saramicic@gmail.com",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      Text(
-                        "Broj poena: 252",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 239, 170, 193),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              userData['name'] ?? "Korisnik",
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              userData['email'] ?? "",
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              "Poeni: ${userData['points'] ?? 0}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Color.fromARGB(255, 239, 170, 193),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
+                ),
 
-            _buildProfileOption(
-              icon: Icons.favorite, 
-              iconColor: Colors.pink, 
-              label: "Lista favorita",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WishlistScreen()),
-                );
-              },
-            ),
+                const SizedBox(height: 30),
 
-            _buildProfileOption(
-              icon: Icons.shopping_bag_outlined,
-              iconColor: const Color.fromARGB(255, 0, 0, 0),
-              label: "Moje porudžbine",
-              onTap: () {
-                Navigator.pushNamed(context, OrdersScreen.routeName);
-              },
-            ),
+                _buildProfileOption(
+                  icon: Icons.favorite_border,
+                  iconColor: Colors.pink,
+                  label: "Lista favorita",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WishlistScreen(),
+                      ),
+                    );
+                  },
+                ),
 
-            _buildProfileOption(
-              icon: Icons.qr_code_2,
-              iconColor: Colors.black87,
-              label: "Loyalty kartica",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoyaltyCardScreen(),
-                  ),
-                );
-              },
-            ),
+                _buildProfileOption(
+                  icon: Icons.shopping_bag_outlined,
+                  iconColor: Colors.brown,
+                  label: "Moje porudžbine",
+                  onTap: () =>
+                      Navigator.pushNamed(context, OrdersScreen.routeName),
+                ),
 
-            _buildProfileOption(
-              icon: Icons.settings_outlined,
-              iconColor: Colors.black87,
-              label: "Podešavanja profila",
-              onTap: () {},
-            ),
-            const SizedBox(height: 50),
+                _buildProfileOption(
+                  icon: Icons.qr_code_scanner,
+                  iconColor: Colors.deepPurple,
+                  label: "Moja Loyalty Kartica",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoyaltyCardScreen(
+                          name: userData['name'] ?? "Korisnik",
+                          uid: user.uid,
+                          points: userData['points'] ?? 0,
+                        ),
+                      ),
+                    );
+                  },
+                ),
 
-            // logout
-            Center(
-              child: SizedBox(
-                width: size.width * 0.6, 
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 239, 170, 193),
-                    foregroundColor: Colors.white,
-                    elevation: 5,
-                    shadowColor: const Color.fromARGB(255, 239, 170, 193).withOpacity(0.5),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                _buildProfileOption(
+                  icon: Icons.edit_outlined,
+                  iconColor: Colors.blue,
+                  label: "Izmeni profil",
+                  onTap: () => _showEditProfileDialog(context, userData),
+                ),
+
+                const SizedBox(height: 30),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 239, 170, 193),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    "Izlogujte se",
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                    },
+                    child: const Text(
+                      "IZLOGUJTE SE",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showEditProfileDialog(
+    BuildContext context,
+    Map<String, dynamic> userData,
+  ) {
+    final nameController = TextEditingController(text: userData['name']);
+    final addressController = TextEditingController(text: userData['address']);
+    final phoneController = TextEditingController(text: userData['phone']);
+    final formKey = GlobalKey<FormState>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          left: 20,
+          right: 20,
+          top: 20,
+        ),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Izmeni podatke",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: "Ime i prezime",
+                  border: OutlineInputBorder(),
+                ),
+                validator: (v) => v!.isEmpty ? "Polje je obavezno" : null,
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                controller: addressController,
+                decoration: const InputDecoration(
+                  labelText: "Adresa stanovanja",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                controller: phoneController,
+                decoration: const InputDecoration(
+                  labelText: "Broj telefona",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                onPressed: () async {
+                  if (formKey.currentState!.validate()) {
+                    final uid = FirebaseAuth.instance.currentUser!.uid;
+                    await FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(uid)
+                        .update({
+                          'name': nameController.text.trim(),
+                          'address': addressController.text.trim(),
+                          'phone': phoneController.text.trim(),
+                        });
+                    if (context.mounted) Navigator.pop(context);
+                  }
+                },
+                child: const Text(
+                  "SAČUVAJ IZMENE",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // pomocni vidzet za ove kartice
+  // vidzeti za stavke 
   Widget _buildProfileOption({
     required IconData icon,
     required Color iconColor,
@@ -160,7 +271,7 @@ class UserProfileScreen extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 18),
+      padding: const EdgeInsets.only(bottom: 15),
       child: Container(
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 250, 238, 239),
@@ -169,13 +280,6 @@ class UserProfileScreen extends StatelessWidget {
             color: const Color.fromARGB(255, 230, 200, 205),
             width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
         ),
         child: InkWell(
           onTap: onTap,
@@ -184,18 +288,21 @@ class UserProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
             child: Row(
               children: [
-                Icon(icon, size: 28, color: iconColor),
+                Icon(icon, size: 26, color: iconColor),
                 const SizedBox(width: 20),
                 Text(
                   label,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
                   ),
                 ),
                 const Spacer(),
-                const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.grey,
+                ),
               ],
             ),
           ),

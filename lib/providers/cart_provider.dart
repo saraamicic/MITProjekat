@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:uuid/uuid.dart';
 
-// modeluje kako izgleda jedna stavka u korpi
+// Model stavke u korpi
 class CartModel with ChangeNotifier {
   final String cartId;
   final String productId;
@@ -16,17 +18,14 @@ class CartModel with ChangeNotifier {
 }
 
 class CartProvider with ChangeNotifier {
-  // mapa koja čuva stavke: ključ je productId, vrednost je cartmodel
   final Map<String, CartModel> _cartItems = {};
 
   Map<String, CartModel> get getCartItems {
     return _cartItems;
   }
 
-  // funkcija za dodavanje u korpu
   void addProductToCart({required String productId}) {
     if (_cartItems.containsKey(productId)) {
-      // ako proizvod već postoji, samo povećaj količinu
       _cartItems.update(
         productId,
         (existingValue) => CartModel(
@@ -36,7 +35,6 @@ class CartProvider with ChangeNotifier {
         ),
       );
     } else {
-      // ako ne postoji, dodaj novi
       _cartItems.putIfAbsent(
         productId,
         () => CartModel(
@@ -46,10 +44,9 @@ class CartProvider with ChangeNotifier {
         ),
       );
     }
-    notifyListeners(); // ovo javlja svim ekranima da se korpa promenila
+    notifyListeners();
   }
 
-  // ukupna količina proizvoda u korpi (za ikonicu ili naslov)
   int get getCartQuantity {
     int total = 0;
     _cartItems.forEach((key, value) {
@@ -57,42 +54,92 @@ class CartProvider with ChangeNotifier {
     });
     return total;
   }
-  
+
   void clearCart() {
     _cartItems.clear();
     notifyListeners();
   }
 
-  // Za menjanje količine
-void updateQuantity({required String productId, required int quantity}) {
-  if (quantity < 1) return;
-  _cartItems.update(productId, (existing) => CartModel(
-    cartId: existing.cartId,
-    productId: productId,
-    quantity: quantity,
-  ));
-  notifyListeners();
-}
-// Za brisanje jednog proizvoda iz korpe
-void removeOneItem({required String productId}) {
-  _cartItems.remove(productId);
-  notifyListeners();
-}
+  void updateQuantity({required String productId, required int quantity}) {
+    if (quantity < 1) return;
+    _cartItems.update(
+      productId,
+      (existing) => CartModel(
+        cartId: existing.cartId,
+        productId: productId,
+        quantity: quantity,
+      ),
+    );
+    notifyListeners();
+  }
 
-//fja da racuna ukupnu cenu
-double getTotalAmount(ProductsProvider productsProvider) {
-  double total = 0.0;
-  
-  _cartItems.forEach((key, value) {
-    // nadjemo proizvod u products provideru preko ida
-    final getProduct = productsProvider.findByProdId(value.productId);
-    
-    if (getProduct != null) {
-      total += getProduct.price * value.quantity;
+  void removeOneItem({required String productId}) {
+    _cartItems.remove(productId);
+    notifyListeners();
+  }
+
+  double getTotalAmount(ProductsProvider productsProvider) {
+    double total = 0.0;
+    _cartItems.forEach((key, value) {
+      final getProduct = productsProvider.findByProdId(value.productId);
+      if (getProduct != null) {
+        total += getProduct.price * value.quantity;
+      }
+    });
+    return total;
+  }
+
+  Future<void> placeOrder({required ProductsProvider productsProvider}) async {
+    final auth = FirebaseAuth.instance;
+    final firestore = FirebaseFirestore.instance;
+    final User? user = auth.currentUser;
+
+    if (user == null) throw Exception("Morate biti ulogovani!");
+
+    try {
+      //povuci podatke o korisniku iz users kolekcije
+      DocumentSnapshot userDoc = await firestore.collection("users").doc(user.uid).get();
+      if (!userDoc.exists) throw Exception("Podaci o korisniku nisu pronađeni!");
+      
+      final userData = userDoc.data() as Map<String, dynamic>;
+
+      // pripremi listu proizvoda za bazu
+      List itemsList = [];
+      _cartItems.forEach((key, value) {
+        final currentProd = productsProvider.findByProdId(value.productId);
+        if (currentProd != null) {
+          itemsList.add({
+            'productId': value.productId,
+            'title': currentProd.title,
+            'price': currentProd.price,
+            'quantity': value.quantity,
+          });
+        }
+      });
+
+      double total = getTotalAmount(productsProvider);
+      int pointsToEarn = (total * 0.1).toInt(); // 10% od ukupne cene u poene
+
+      // upis u "orders" kolekciju
+      await firestore.collection("orders").add({
+        'orderId': const Uuid().v4(),
+        'userId': user.uid,
+        'userName': userData['name'],
+        'userAddress': userData['address'],
+        'userPhone': userData['phone'],
+        'items': itemsList,
+        'totalPrice': total,
+        'orderDate': Timestamp.now(),
+      });
+
+      // dodaj poene korisniku (Loyalty sistem)
+      await firestore.collection("users").doc(user.uid).update({
+        'points': FieldValue.increment(pointsToEarn),
+      });
+
+      clearCart();
+    } catch (e) {
+      rethrow;
     }
-  });
-  
-  return total;
-}
-
+  }
 }

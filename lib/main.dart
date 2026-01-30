@@ -9,7 +9,6 @@ import 'package:glossyprojekat/screens/inner_screens/orders_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/sub_category_screen.dart';
-import 'package:glossyprojekat/screens/profile/loyalty_card_screen.dart';
 import 'package:glossyprojekat/screens/profile/wishlist_screen.dart';
 import 'package:glossyprojekat/screens/root_screen.dart';
 import 'package:glossyprojekat/screens/search_screen.dart';
@@ -77,7 +76,6 @@ class MyApp extends StatelessWidget {
           SearchScreen.routeName: (context) => const SearchScreen(),
           RegisterScreen.routeName: (context) => const RegisterScreen(),
           UserProfileScreen.routeName: (context) => const UserProfileScreen(),
-          LoyaltyCardScreen.routeName: (context) => const LoyaltyCardScreen(),
           WishlistScreen.routeName: (context) => WishlistScreen(),
           CheckoutScreen.routeName: (context) => const CheckoutScreen(),
           OrdersScreen.routeName: (context) => const OrdersScreen(),
