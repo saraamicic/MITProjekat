@@ -39,6 +39,7 @@ class OrdersProvider with ChangeNotifier {
     try {
       final snapshot = await _firestore.collection("orders").get();
       _orders.clear();
+      // ignore: unused_local_variable
       for (var doc in snapshot.docs) {
         
       }

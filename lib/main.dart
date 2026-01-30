@@ -5,6 +5,7 @@ import 'package:glossyprojekat/providers/orders_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/providers/wishlist_provider.dart';
 import 'package:glossyprojekat/screens/inner_screens/checkout_screen.dart';
+import 'package:glossyprojekat/screens/inner_screens/orders_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
 import 'package:glossyprojekat/screens/inner_screens/sub_category_screen.dart';
@@ -79,6 +80,7 @@ class MyApp extends StatelessWidget {
           LoyaltyCardScreen.routeName: (context) => const LoyaltyCardScreen(),
           WishlistScreen.routeName: (context) => WishlistScreen(),
           CheckoutScreen.routeName: (context) => const CheckoutScreen(),
+          OrdersScreen.routeName: (context) => const OrdersScreen(),
         },
       ),
     );

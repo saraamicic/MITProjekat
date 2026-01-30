@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/screens/profile/loyalty_card_screen.dart';
 import 'package:glossyprojekat/screens/profile/wishlist_screen.dart';
+import 'package:glossyprojekat/screens/inner_screens/orders_screen.dart'; 
 
 class UserProfileScreen extends StatelessWidget {
   static const routeName = "/UserProfileScreen";
@@ -22,7 +23,7 @@ class UserProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            //blok za user info
+            // Blok za user info
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -83,8 +84,17 @@ class UserProfileScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WishlistScreen()),
+                  MaterialPageRoute(builder: (context) => const WishlistScreen()),
                 );
+              },
+            ),
+
+            _buildProfileOption(
+              icon: Icons.shopping_bag_outlined,
+              iconColor: const Color.fromARGB(255, 0, 0, 0),
+              label: "Moje porudžbine",
+              onTap: () {
+                Navigator.pushNamed(context, OrdersScreen.routeName);
               },
             ),
 
@@ -110,6 +120,7 @@ class UserProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 50),
 
+            // logout
             Center(
               child: SizedBox(
                 width: size.width * 0.6, 
@@ -141,7 +152,7 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 
-  // Pomoćni vidžet za ova tri
+  // pomocni vidzet za ove kartice
   Widget _buildProfileOption({
     required IconData icon,
     required Color iconColor,
