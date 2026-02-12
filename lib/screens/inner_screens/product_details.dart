@@ -2,10 +2,12 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/models/product_model.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
+import 'package:glossyprojekat/providers/navigation_provider.dart';
 import 'package:glossyprojekat/providers/wishlist_provider.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   static const routName = "/ProductDetailsScreen";
@@ -71,13 +73,16 @@ class ProductDetailsScreen extends StatelessWidget {
                         ),
                         child: IconButton(
                           onPressed: () {
-                            // Pozivamo funkciju za dodavanje/uklanjanje
+                            if (FirebaseAuth.instance.currentUser == null) {
+                              _showLoginDialog(context);
+                              return;
+                            }
                             wishlistProvider.addOrRemoveFromWishlist(
                               productId: productModel.id,
                             );
                           },
                           icon: Icon(
-                            // Proveravamo da li je ID u mapi favorita
+                            //da li je u fav
                             wishlistProvider.isProductInWishlist(
                                   productId: productModel.id,
                                 )
@@ -125,11 +130,47 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              // da li je ulogovan
+              final user = FirebaseAuth.instance.currentUser;
+
+              if (user == null) {
+                //ako nije
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Prijava obavezna"),
+                    content: const Text(
+                      "Morate biti ulogovani da biste dodali proizvod u korpu.",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("Otkaži"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); 
+                          Provider.of<NavigationProvider>(
+                            context,
+                            listen: false,
+                          ).setIndex(4);
+
+                          Navigator.popUntil(context, (route) => route.isFirst);
+                        },
+                        child: const Text("Prijavi se"),
+                      ),
+                    ],
+                  ),
+                );
+                return;
+              }
+              //ako je ulogovan
               final cartProvider = Provider.of<CartProvider>(
                 context,
                 listen: false,
               );
               cartProvider.addProductToCart(productId: productModel.id);
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   backgroundColor: const Color.fromARGB(255, 226, 143, 171),
@@ -159,6 +200,39 @@ class ProductDetailsScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  void _showLoginDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Prijava obavezna"),
+        content: const Text(
+          "Morate biti ulogovani da biste koristili ovu opciju.",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Otkaži"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); 
+              Provider.of<NavigationProvider>(
+                context,
+                listen: false,
+              ).setIndex(4);
+
+              Navigator.popUntil(context, (route) => route.isFirst);
+            },
+            child: const Text(
+              "Prijavi se",
+              style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
       ),
     );
   }

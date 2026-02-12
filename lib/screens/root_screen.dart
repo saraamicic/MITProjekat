@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:glossyprojekat/providers/navigation_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/screens/cart/cart_screen.dart';
 import 'package:glossyprojekat/screens/categories_screen.dart';
@@ -40,16 +41,15 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final navProvider = Provider.of<NavigationProvider>(context);
+    
     return Scaffold(
-      body: screens[currentIndex],
+      body: screens[navProvider.selectedIndex],
 
       bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
+        selectedIndex: navProvider.selectedIndex,
         onDestinationSelected: (index) {
-          //ovo je da kad kliknem na neki od ikonica da je to onda current
-          setState(() {
-            currentIndex = index;
-          });
+          navProvider.setIndex(index);
         },
         destinations: const [
           NavigationDestination(

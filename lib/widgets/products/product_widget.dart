@@ -1,15 +1,16 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/models/product_model.dart';
 import 'package:glossyprojekat/providers/wishlist_provider.dart';
 import 'package:glossyprojekat/screens/inner_screens/product_details.dart';
 import 'package:glossyprojekat/widgets/subtitle_text.dart';
 import 'package:glossyprojekat/widgets/title_text.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 
 class ProductWidget extends StatelessWidget {
   final ProductModel productModel;
-  
+
   const ProductWidget({super.key, required this.productModel});
 
   @override
@@ -17,7 +18,7 @@ class ProductWidget extends StatelessWidget {
     // dodala provajder
     final wishlistProvider = Provider.of<WishlistProvider>(context);
     Size size = MediaQuery.of(context).size;
-    
+
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -71,17 +72,30 @@ class ProductWidget extends StatelessWidget {
                       // srculence
                       IconButton(
                         onPressed: () {
+                          if (FirebaseAuth.instance.currentUser == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  "Molimo ulogujte se da biste dodali u favorite.",
+                                ),
+                              ),
+                            );
+                            return;
+                          }
                           wishlistProvider.addOrRemoveFromWishlist(
                             productId: productModel.id,
                           );
                         },
                         icon: Icon(
                           wishlistProvider.isProductInWishlist(
-                                  productId: productModel.id)
+                                productId: productModel.id,
+                              )
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          color: wishlistProvider.isProductInWishlist(
-                                  productId: productModel.id)
+                          color:
+                              wishlistProvider.isProductInWishlist(
+                                productId: productModel.id,
+                              )
                               ? Colors.red
                               : Colors.grey,
                         ),

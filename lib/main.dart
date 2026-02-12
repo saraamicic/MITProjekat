@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/consts/app_colors.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
+import 'package:glossyprojekat/providers/navigation_provider.dart';
 import 'package:glossyprojekat/providers/orders_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/providers/wishlist_provider.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProvider(create: (_) => ProductsProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         ChangeNotifierProvider(create: (_) => WishlistProvider()),
