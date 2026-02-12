@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:glossyprojekat/models/order_model.dart';
@@ -39,9 +41,7 @@ class OrdersProvider with ChangeNotifier {
     try {
       final snapshot = await _firestore.collection("orders").get();
       _orders.clear();
-      // ignore: unused_local_variable
-      for (var doc in snapshot.docs) {
-        
+      for (var doc in snapshot.docs) {        
       }
       notifyListeners();
     } catch (e) {

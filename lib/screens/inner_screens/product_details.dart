@@ -1,5 +1,6 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
+import 'package:glossyprojekat/YoutubeService.dart';
 import 'package:glossyprojekat/models/product_model.dart';
 import 'package:glossyprojekat/providers/cart_provider.dart';
 import 'package:glossyprojekat/providers/navigation_provider.dart';
@@ -44,14 +45,14 @@ class ProductDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //naslov
+                  // Naslov
                   TitelesTextWidget(
                     label: productModel.title,
                     fontSize: 22,
                     maxLines: 5,
                   ),
                   const SizedBox(height: 15),
-                  //cena i srce
+                  // Cena i Srce (Wishlist)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -63,12 +64,8 @@ class ProductDetailsScreen extends StatelessWidget {
                       ),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color.fromARGB(
-                            255,
-                            226,
-                            143,
-                            171,
-                          ).withOpacity(0.1),
+                          color: const Color.fromARGB(255, 226, 143, 171)
+                              .withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
@@ -82,13 +79,10 @@ class ProductDetailsScreen extends StatelessWidget {
                             );
                           },
                           icon: Icon(
-                            //da li je u fav
                             wishlistProvider.isProductInWishlist(
-                                  productId: productModel.id,
-                                )
-                                ? Icons
-                                      .favorite // Puno srce
-                                : Icons.favorite_border, // Prazno srce
+                                    productId: productModel.id)
+                                ? Icons.favorite
+                                : Icons.favorite_border,
                             color: Colors.pink,
                             size: 28,
                           ),
@@ -102,7 +96,71 @@ class ProductDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   SubtitleTextWidget(label: productModel.description),
 
-                  const SizedBox(height: 120),
+                  const SizedBox(height: 30),
+
+                  // YouTube
+                  const TitelesTextWidget(
+                    label: "Video tutorijali",
+                    fontSize: 18,
+                  ),
+                  const SizedBox(height: 10),
+                  FutureBuilder<List<dynamic>>(
+                    future: YoutubeService().fetchTutorials(productModel.title),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(color: Colors.pink),
+                        );
+                      }
+                      if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const SubtitleTextWidget(
+                          label: "Trenutno nema dostupnih tutorijala.",
+                        );
+                      }
+
+                      return Column(
+                        children: snapshot.data!.map((video) {
+                          return Card(
+                            elevation: 0,
+                            margin: const EdgeInsets.only(bottom: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: BorderSide(color: Colors.grey.shade200),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.all(8),
+                              leading: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  video['snippet']['thumbnails']['default']['url'],
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              title: Text(
+                                video['snippet']['title'],
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: const Text(
+                                "Pogledaj na YouTube",
+                                style: TextStyle(fontSize: 11, color: Colors.pink),
+                              ),
+                              onTap: () {
+                                
+                              },
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 120), 
                 ],
               ),
             ),
@@ -130,45 +188,15 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              // da li je ulogovan
               final user = FirebaseAuth.instance.currentUser;
 
               if (user == null) {
-                //ako nije
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Prijava obavezna"),
-                    content: const Text(
-                      "Morate biti ulogovani da biste dodali proizvod u korpu.",
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("Otkaži"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context); 
-                          Provider.of<NavigationProvider>(
-                            context,
-                            listen: false,
-                          ).setIndex(4);
-
-                          Navigator.popUntil(context, (route) => route.isFirst);
-                        },
-                        child: const Text("Prijavi se"),
-                      ),
-                    ],
-                  ),
-                );
+                _showLoginDialog(context);
                 return;
               }
-              //ako je ulogovan
-              final cartProvider = Provider.of<CartProvider>(
-                context,
-                listen: false,
-              );
+
+              final cartProvider =
+                  Provider.of<CartProvider>(context, listen: false);
               cartProvider.addProductToCart(productId: productModel.id);
 
               ScaffoldMessenger.of(context).showSnackBar(
@@ -219,12 +247,9 @@ class ProductDetailsScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context); 
-              Provider.of<NavigationProvider>(
-                context,
-                listen: false,
-              ).setIndex(4);
-
+              Navigator.pop(context);
+              Provider.of<NavigationProvider>(context, listen: false)
+                  .setIndex(4);
               Navigator.popUntil(context, (route) => route.isFirst);
             },
             child: const Text(

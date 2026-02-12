@@ -8,11 +8,9 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> fetchProducts() async {
     try {
-      // Povlačimo sve proizvode 
+      // povlačimo sve proizvode 
       final snapshot = await FirebaseFirestore.instance.collection('products').get();
-      
       _products = snapshot.docs.map((doc) => ProductModel.fromFirestore(doc)).toList();
-      
       notifyListeners();
     } catch (e) {
       print("Greška pri preuzimanju proizvoda: $e");

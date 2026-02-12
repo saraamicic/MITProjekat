@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:glossyprojekat/providers/navigation_provider.dart';
 import 'package:glossyprojekat/providers/products_provider.dart';
 import 'package:glossyprojekat/screens/cart/cart_screen.dart';
-import 'package:glossyprojekat/screens/categories_screen.dart';
-import 'package:glossyprojekat/screens/home_screen.dart';
-import 'package:glossyprojekat/screens/profile_screen.dart';
-import 'package:glossyprojekat/screens/search_screen.dart';
+import 'package:glossyprojekat/screens/main_screens/categories_screen.dart';
+import 'package:glossyprojekat/screens/main_screens/home_screen.dart';
+import 'package:glossyprojekat/screens/main_screens/profile_screen.dart';
+import 'package:glossyprojekat/screens/main_screens/search_screen.dart';
 import 'package:provider/provider.dart';
 
 class RootScreen extends StatefulWidget {
