@@ -10,18 +10,16 @@ import 'package:provider/provider.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({super.key});
+  static const routeName = "/RootScreen";
 
   @override
   State<RootScreen> createState() => _RootScreenState();
 }
 
 class _RootScreenState extends State<RootScreen> {
-  int currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
-    //cim se aplikacija pokrene fetchujem podatke radi korpe
     Future.microtask(() async {
       try {
         await Provider.of<ProductsProvider>(context, listen: false).fetchProducts();
@@ -45,33 +43,15 @@ class _RootScreenState extends State<RootScreen> {
     
     return Scaffold(
       body: screens[navProvider.selectedIndex],
-
       bottomNavigationBar: NavigationBar(
         selectedIndex: navProvider.selectedIndex,
-        onDestinationSelected: (index) {
-          navProvider.setIndex(index);
-        },
+        onDestinationSelected: (index) => navProvider.setIndex(index),
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.category),
-            label: 'Categories',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
+          NavigationDestination(icon: Icon(Icons.category), label: 'Categories'),
+          NavigationDestination(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+          NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );

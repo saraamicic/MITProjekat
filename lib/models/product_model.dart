@@ -20,9 +20,22 @@ class ProductModel with ChangeNotifier {
     this.isNew = false,
   });
 
-//product model zna da iz firebasea uzme
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'price': price,
+      'category': category,
+      'description': description,
+      'image': image,
+      'quantity': quantity,
+      'isBestseller': isBestseller,
+      'isNew': isNew,
+    };
+  }
+
   factory ProductModel.fromFirestore(DocumentSnapshot doc) {
-    Map data = doc.data() as Map<String, dynamic>;
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return ProductModel(
       id: doc.id,
       title: data['title'] ?? '',

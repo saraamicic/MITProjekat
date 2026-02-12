@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:glossyprojekat/screens/inner_screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
+  static const routeName = "/LoginScreen";
   const LoginScreen({super.key});
 
   @override
@@ -12,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -21,22 +23,39 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _loginUser() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+    final String email = _emailController.text.trim().toLowerCase();
+    final String password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Molimo popunite sva polja")),
       );
       return;
     }
 
+    setState(() => _isLoading = true);
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+        email: email, 
+        password: password
       );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Greška pri prijavi: ${e.toString()}")),
-      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Uspešna prijava!")),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Greška: ${e.message}")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -45,9 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 253, 235, 236),
-        elevation: 0,
-        title: const Text("Prijava", style: TextStyle(color: Colors.black)),
+        title: const Text("Prijava"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -55,7 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             const SizedBox(height: 50),
-            const Text("Unesite podatke za prijavu", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+            const Text("Unesite podatke za prijavu",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
             const SizedBox(height: 30),
             TextField(
               controller: _emailController,
@@ -77,22 +95,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             const SizedBox(height: 40),
-            SizedBox(
-              width: size.width * 0.7,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _loginUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 239, 170, 193),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: const Text("Prijavi se", style: TextStyle(color: Colors.white, fontSize: 18)),
-              ),
-            ),
+            _isLoading
+                ? const CircularProgressIndicator(color: Colors.pink)
+                : SizedBox(
+                    width: size.width * 0.7,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _loginUser,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 239, 170, 193),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text("Prijavi se", style: TextStyle(color: Colors.white, fontSize: 18)),
+                    ),
+                  ),
             const SizedBox(height: 20),
             TextButton(
               onPressed: () => Navigator.pushNamed(context, RegisterScreen.routeName),
-              child: const Text("Nemaš nalog? Registruj se ovde", style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold)),
+              child: const Text("Nemaš nalog? Registruj se ovde",
+                  style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
